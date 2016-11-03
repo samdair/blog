@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="ti">
+<head>
+    <title>ትግርኛ ጥራይ ንምፃሓፍ</title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+    <meta charset="UTF-8">
+
+
+    <! -- google font is the best unicode amharic font I found so far that works accross many platforms -->
+    <style type="text/css">
+       //@import url(http://fonts.googleapis.com/earlyaccess/droidsansethiopic.css);
+        body {
+            //font-family: 'Droid Sans Ethiopic', serif !important;
+        }
+        #target, #target2 {
+                        font-family: 'Droid Sans Ethiopic', serif !important;
+        }
+        .selected { background-color:#4cff00;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+     <h1>ሳንዱቅ</h1>
+
+    <input type="hidden" id="mode" value="amharic" />
+    <input type="button" id="modeAmharic" class="mode selected" value="ትግርኛ" />
+    <input type="button" id="modeEnglish" class="mode" value="English" /><br />
+    <textarea id="target" rows="4" cols="60"></textarea>
+    <p>
+        In today`s world, technology is changing lives across the world.
+        As a result, millions of people are living in the information age
+        and they derive great benefits from the use of their native languages.
+        Unfortunately, people of Eritrea and entire Ethiopia face a myriad of challenges
+        mostly derived from their writing system which consists of a large number of
+        characters that are not fully supported on all operating systems. Currently,
+        all operating systems come without standard Input Method Editor for Tigrigna
+        writing and no input method solution and standard keyboard layout for Tigrigna writing system has existed so
+        far.
+        Therefore, the objective of this thesis was to design Phonetic-based
+        keyboard mapping algorithm and keyboard layout for Tigrigna. Designing
+        such an algorithm and a corresponding keyboard layout, however,
+        requires scholarly investigation of challenges that are associated
+        with Tigrigna scripts and immediate solution for a number of technical
+        challenges like mapping about 300 characters onto the limited number
+        of keys on standard keyboard, character entry speed and easiness to use among others.
+        This study proposed an algorithm that used Phonetic-based keyboard mapping technique,
+        highest frequency among Tigrigna order forms, and syllable matrix of Tigrigna scripts arrangement.
+        The designed algorithm and keyboard layout was implemented and tested by developing JavaScript
+        Tigrigna Input Method Editor. Finally a comparison test among the developed Editor,
+        Google IME and Microsoft IME was done to measure the efficiency and effectiveness of the
+        newly designed algorithm when compared with these pre-existing IMEs. The test results showed that;
+        the new Editor gives the fastest typing speed with minimum key combinations and errors free. Therefore,
+        for Tigrigna language, Phonetic based keyboard mapping is more efficient compared other keyboard mapping
+        techniques.
+    </p>
+
+</div>
+     <script src="bower_components/jquery/dist/jquery.js"></script>
+     <script src="bower_components/underscore/underscore.js"></script>
+     <script src="bower_components/backbone/backbone.js"></script>
+     <script src="bower_components/amharic/amharicKeyboard.jquery.js"></script>
+     <script src="bower_components/amharic/amharicKeyboard.jquery.min.js"></script>
+
+
+<script>
+        var modeValue = "amharic";
+
+        $(document).ready(function () {
+            //it also possible to switch from amharic to english anytime by setting the mode property to "english" or "amharic"
+            //see melastudios.com for example
+            $('#target').focus();
+          var textarea =  $("#target").amharicKeyboard(); //to initialise with english: $("#target").amharicKeyboard({mode:"english"});
+
+            $(".mode").click(function () {
+                var $this = $(this);
+                //var textarea = $("#target").amharicKeyboard();
+                $(".mode").removeClass("selected");
+                $this.addClass("selected");
+
+                if ($this.val() === "English")
+                    modeValue = "english";
+                else
+                    modeValue ="amharic";
+
+                textarea.changeMode(modeValue);
+              $('#target').focus();
+
+
+
+            });
+        });
+    </script>
+
+</body>
+</html>

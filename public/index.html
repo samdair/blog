@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ti">
+<head>
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../bower_components/slickgrid/slick.grid.css">
+    <meta charset="UTF-8">
+    <title>Blog</title>
+    <style>
+        input{
+         left: 50px;
+        }
+        .error, .message{
+            color: red;
+        }
+        .slick-header-column.ui-state-default {
+            background-color: skyBlue ;
+            height: 25px;
+       }
+       .slick-cell, .slick-headerrow-column {
+
+        border-right: 1px solid silver;
+        border-left: 1px solid silver;
+        padding-left: 4px;
+        }
+         .ui-widget-content .slick-row .odd {
+           background-color: red !important;
+        }
+        .row{
+            margin-bottom: 5px;
+        }
+        .btn{
+            margin-bottom: 5px;
+        }
+
+    </style>
+
+    <script type="text/template" class="users-list-template">
+
+        <div class="row">
+            <div class="col-sm-4 ">Name:</div>
+            <div class="col-sm-8 "><span class="username"><%= username %></span></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 ">Email:</div>
+            <div class="col-sm-8 "><span class="email"><%= email %></span></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 ">Photo:</div>
+            <div class="col-sm-8 "><img src='/uploads/<%= photo  || "default-user.png" %>' width = '50px' height="50px"></div>
+        </div>
+        <% if(currentUser){ %>
+        <button class=" edit_user btn btn-default">Edit</button>
+        <button class=" delete_user btn btn-default">Delete</button>
+        <button class=" update_user btn btn-default" style="display:none">Update</button>
+        <button class=" cancel btn btn-default" style="display:none">Cancel</button>
+        <% } %>
+    </script>
+
+    <script type="text/template" class="usersAdmin-list-template">
+
+        <div class="row">
+            <div class="col-sm-4 ">Name:</div>
+            <div class="col-sm-8 "><span class="username"><%= username %></span></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 ">Email:</div>
+            <div class="col-sm-8 "><span class="email"><%= email %></span></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 ">Photo:</div>
+            <div class="col-sm-8 "><img src='/uploads/<%= photo  || "default-user.png" %>' width = '50px' height="50px"></div>
+        </div>
+        <button class=" edit_user btn btn-default">Edit</button>
+        <button class=" delete_user btn btn-default">Delete</button>
+        <button class=" update_user btn btn-default" style="display:none">Update</button>
+        <button class=" cancel btn btn-default" style="display:none">Cancel</button>
+    </script>
+
+    <script type="text/template" class="blogs-list-template">
+        <div class="row">
+            <div class="col-sm-4 ">Author:</div>
+            <div class="col-sm-8 "><span class="author"><%= author %></span></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 ">Title:</div>
+            <div class="col-sm-8 "><span class="title"><%= title %></span></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 ">Description:</div>
+            <div class="col-sm-8 "><span class="description"><%= description %></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 ">Image:</div>
+            <div class="col-sm-8 "><img src='/uploads/<%= image  || "default-blog.png" %>' width = '50px' height="50px"></div>
+        </div>
+        <% if(currentUser){ %>
+        <button class=" edit_blog btn btn-default">Edit</button>
+        <button class=" delete_blog btn btn-default">Delete</button>
+        <button class=" update_blog btn btn-default" style="display:none">Update</button>
+        <button class=" cancel btn btn-default" style="display:none">Cancel</button>
+        <br>
+        <% } %>
+        <h4>Comments</h4>
+        <% if(comments){ %>
+        <% _.each(comments, function(comment) { %>
+        <% if(comment){ %>
+        <div class="row">
+            <div class="col-sm-4">Author:</div>
+            <div class="col-sm-8"><span class="comment" id="author_<%=comment._id %>"><%= comment.author %></span></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 ">Image:</div>
+            <div class="col-sm-8 "><img src='/uploads/<%= comment.image  || "default-blog.png" %>' width = '50px' height="50px"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">comment:</div>
+            <div class="col-sm-8"><span class="comment" id="comment_<%=comment._id %>"><%= comment.comment %></span></div>
+        </div>
+        <br>
+        <% if(comment.currentUser){ %>
+        <button class="edit_comment btn btn-default" id="edit_comment_<%=comment._id %>">Edit</button>
+        <button class="delete_comment btn btn-default" id="delete_comment_<%=comment._id %>">Delete</button>
+        <button class="update_comment btn btn-default" id="update_comment_<%=comment._id %>" style="display:none">Update</button>
+        <button class="cancel btn btn-default" id="cancel_comment_<%=comment._id %>" style="display:none">Cancel</button>
+        <% } %>
+        <br>
+        <% if(comment.replies){ %>
+        <h4>Replies</h4>
+        <% _.each(comment.replies, function(reply) { %>
+        <% if(reply){ %>
+        <div class="row">
+            <div class="col-sm-4">Author:</div>
+            <div class="col-sm-8"><span class="reply" id="reply_<%=reply.author %>"><%= reply.author %></span></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">Image:</div>
+            <div class="col-sm-8 "><img src='/uploads/<%= reply.image  || "default-blog.png" %>' width = '50px' height="50px"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">reply:</div>
+            <div class="col-sm-8"><span class="reply" id="reply_<%=reply._id %>"><%= reply.reply %></span></div>
+        </div>
+        <% if(reply.currentUser){ %>
+        <button class="edit_reply btn btn-default" id="edit_reply_<%=reply._id %>">Edit</button>
+        <button class="delete_reply btn btn-default" id="delete_reply_<%=reply._id %>">Delete</button>
+        <button class="update_reply btn btn-default" id="update_reply_<%=reply._id %>" style="display:none">Update</button>
+        <button class="cancel btn btn-default" id="cancel_reply_<%=reply._id %>" style="display:none">Cancel</button>
+        <% } %>
+        <% } %>
+        <% }); %>
+        <% } %>
+        <% } %>
+        <div class="row">
+            <div class="col-sm-3">Reply:</div>
+            <div class="col-sm-6"><input class="form-control reply_input" id="reply_input_<%= comment._id %>" ></div>
+        </div>
+        <button class="add_reply btn btn-default" id="add_reply_<%= comment._id %>">Add Reply</button>
+        <% }); %>
+
+        <% } %>
+        <h4> New Comment</h4>
+        <div class="row">
+            <div class="col-sm-3">Comment:</div>
+            <div class="col-sm-6"><input class="form-control comment_input"></div>
+        </div>
+
+        <button class="add_comment btn btn-default">Add Comment</button>
+
+    </script>
+
+</head>
+<body>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-1 ">
+        <button type="button" class="btn btn-default login" data-toggle="modal" data-target="#loginModal">Login</button>
+        </div>
+        <div class="col-sm-1 ">
+            <button type="button" class="btn btn-default signup" data-toggle="modal" data-target="#signupModal">Sign Up</button>
+        </div>
+        <div class="col-sm-1 ">
+            <button id="logout" class="btn btn-default" >Log out</button>
+        </div>
+        <div class="col-sm-1 ">
+            <form action="/download" method="post">
+                <button  type="submit" class="btn btn-default ">Download</button>
+            </form>
+        </div>
+        <div class="col-sm-2 ">
+            <form action="/deleteImage" method="post">
+                <button type="submit" class="btn btn-default ">Delete Image</button>
+            </form>
+        </div>
+        <div class="col-sm-1 ">
+            <form action="/sendMail" method="post">
+                <button type="submit" class="btn btn-default ">Send Mail</button>
+            </form>
+        </div>
+    </div>
+    <h4>Users</h4>
+    <div class="row">
+        <div class="col-sm-4 users-list"></div>
+    </div>
+
+    <h4>Blogs</h4>
+    <div class="row">
+        <div class="col-sm-4 blogs-list"></div>
+    </div>
+
+<form name="add_blog">
+    <div class="row">
+        <div class="col-sm-1 ">Title:</div>
+        <div class="col-sm-2 "><input class="form-control title_input" name="title" required></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-1 ">Description:</div>
+        <div class="col-sm-2 "><input class="form-control description_input" name="description" required></div>
+    </div>
+    <div class="row">
+        <div class="col-sm-1 ">Image:</div>
+        <div class="col-sm-2 ">
+            <form class='uploadImage' enctype="multipart/form-data" action="/uploadImage" method="post">
+                 <input type="file" name="image" class="file"/>
+            </form>
+        </div>
+    </div>
+    <br>
+    <button type="submit" class="add_blog btn btn-default">Add Blog</button>
+</form>
+
+    <div><a href="index1.html">Tigrigna</a></div>
+</div>
+
+
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+<script src="../bower_components/validator-js/validator.min.js"></script>
+<script src="../bower_components/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../bower_components/jquery/dist/jquery.event.drag-2.2.js"></script>
+<script src="../bower_components/underscore/underscore.js"></script>
+<script src="../bower_components/backbone/backbone.js"></script>
+<script src="../bower_components/plotly/plotly-latest.min.js"></script>
+<script src="../bower_components/slickgrid/slick.core.js"></script>
+<script src="../bower_components/slickgrid/slick.grid.js"></script>
+<script src="js/user.js"></script>
+<script src="js/blog.js"></script>
+<!-- Login Modal -->
+<form class="modal fade" id="loginModal" role="dialog" name="login">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close btn btn-default" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Login</h4>
+                <span class="message"></span>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-sm-4 ">Name:</div>
+                    <div class="col-sm-8 "><input type="text" id="username_login" class="form-control" name="username" required></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 ">Password:</div>
+                    <div class="col-sm-8 "><input type="password" id="password_login" class="form-control" name="password" required></div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-sm-4 ">
+                        <button type="submit"  class="btn btn-default" id="login">Login</button>
+                    </div>
+                    <div class="col-sm-4 ">
+                        <button type="button" class="btn btn-default"  data-dismiss="modal">Close</button>
+                    </div>
+                    <div class="col-sm-4 ">
+                        <button type="button" class="btn btn-default sign_up"  data-dismiss="modal">Sign Up</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+<!-- Sign Up Modal -->
+<form class="modal fade" id="signupModal" role="dialog" name="signup">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close btn btn-default" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Sign Up</h4>
+                <span class="message"></span>
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-sm-4 ">Name:</div>
+                    <div class="col-sm-8 "><input type="text" id="username_signup"class="form-control" name="username"></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 ">Password:</div>
+                    <div class="col-sm-8 "><input type="password" id="password_signup" class="form-control" name="password"></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 ">Email:</div>
+                    <div class="col-sm-8 "><input type="text" id="email_signup"class="form-control" name="email"></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 ">Role:</div>
+                    <div class="col-sm-8 "><input type="text" id="role_signup" class="form-control" name="role"></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4 ">Photo:</div>
+                    <div class="col-sm-8 ">
+                        <form class='uploadPhoto' enctype="multipart/form-data" action="/uploadPhoto" method="post">
+                            <input type="file" name="photo" class="photo"/>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-sm-4 ">
+                        <button type="submit" class="btn btn-default" id="signup">Sign Up</button>
+                    </div>
+                    <div class="col-sm-8 ">
+                        <button type="button" class="btn btn-default"  data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+</body>
+</html>
