@@ -76,7 +76,7 @@ app.post('/deleteImage', function(req, res) {
             service: 'Gmail',
             auth: {
                 user: 'samueldair@gmail.com', // Your email id
-                pass: 'dairterke' // Your password
+                pass: 'xxxxxx' // Your password
             }
     });
 
